@@ -132,68 +132,107 @@
 
 ## Your Development Log
 
-### Entry 1 - [Date and Time]
-**What I did**:
+### Entry 1 - [November 14, 2026, 3:12 AM]
+**What I did**:Updated my student ID.
 
-**Details**:
+**Details**:Set studentID to 446051847 in SchedulerSimulationSync.java.
 
-**Challenges**:
+The student ID is used to seed the random number generator which in turn is used to generate the simulation parameters.
 
-**Solution**:
+Recorded the change in the commit 'Update student ID' at 3:12 AM.
 
-**Time spent**:
+**Challenges**:An incorrect student ID would result in simulation parameters and expected verification values that don't match my ID.
 
----
+**Solution**:set the seed to my actual student ID 446051847.
 
-### Entry 2 - [Date and Time]
-**What I did**:
-
-**Details**:
-
-**Challenges**:
-
-**Solution**:
-
-**Time spent**:
+**Time spent**:30 minutes.
 
 ---
 
-### Entry 3 - [Date and Time]
-**What I did**:
+### Entry 2 - [November 14, 2026, 4:34 AM]
+**What I did**:protected the ready queue with a ReentrantLock.
 
-**Details**:
+**Details**:Added queueLock to protect the shared list and map.
 
-**Challenges**:
+**Challenges**:Added queueLock to protect the shared list and map.
 
-**Solution**:
+Protected accesses in add(), poll(), processOf() and snapshot().
 
-**Time spent**:
+Used try/finally to ensure the lock is released when we're leaving each protected section.
 
----
+Recorded the change in the commit: Feature 1: Protected the ready queue with a ReentrantLock at 4:34 AM.
 
-### Entry 4 - [Date and Time]
-**What I did**:
+**Solution**:Two CPUs could read the same queue head before either of the CPUS had actually removed it, which would lead to the wrong process being selected.
 
-**Details**:
-
-**Challenges**:
-
-**Solution**:
-
-**Time spent**:
+**Time spent**:1 hour 22 minutes.
 
 ---
 
-### Entry 5 - [Date and Time]
-**What I did**:
+### Entry 3 - [November 14, 2026, 4:55 AM]
+**What I did**:protect the shared data with separate locks.
 
-**Details**:
+**Details**:Added contextSwitchLock, completedProcessLock and serviceTimeLock.
 
-**Challenges**:
+Protected the read-modify-write operations for contextSwitchCount, completedProcessCount and totalServiceTime.
 
-**Solution**:
+Protected each getter with the same lock as its corresponding update method.
 
-**Time spent**:
+We used the finally blocks to release the locks.
+
+Recorded the change in the commit Feature 2: Protected shared statistics with separate locks at 4:55 AM.
+
+
+**Challenges**:concurrent read-modify-write operations could overwrite each other's updates and end up with the wrong stats.
+
+**Solution**: Protect each complete update with its own lock. Separate locks mean that operations on separate statistics can proceed without necessarily blocking each other.
+
+**Time spent**:21 minutes
+
+---
+
+### Entry 4 - [November 14, 2026, 6:00 AM]
+**What I did**:replaced the repeated queue polling with a counting semaphore and added the shutdown signalling.
+
+
+**Details**:Added readyCount with an initial value of zero as the queue is initially empty.
+
+Released one permit after having added a process to the ready queue.
+
+Used waitForProcess() to get a permit prior to a CPU polling the queue.
+
+Removed the repeated empty queue polling and sleep loop.
+
+Added signalShutdown() to wake up the blocked CPUs after all the processes have completed.
+
+Added a completion check in after we've got the permit so that shutdown permits don't cause the CPUs to poll an empty queue.
+
+Recorded the change in the commit: Feature 3: Replaced busy waiting with a counting semaphore. 6.00 AM.
+
+**Challenges**:A CPU blocked inside acquire() would not automatically wake up when the last process had completed.
+
+**Solution**:Used signalShutdown() to release the SharedStats.totalCPUs permits once. The awakened CPUs then check whether all the processes have finished and subsequently shut down.
+
+**Time spent**:1 hour 5min
+
+---
+
+### Entry 5 - [November 16, 2026, 2:00 AM]
+**What I did**:went through the dev record and the explanations of the sync features.
+
+**Details**:Matched up the four recorded changes to their commit timestamps.
+
+Looked at the purpose of the ready queue lock, the data locks and the counting semaphore.
+
+Distinguished recorded commit times from active working times.
+
+We've now identified all the evidence required for submission (final verification output and the video link).
+
+**Challenges**:The commit history will tell you when changes were committed, but it will not tell you when a session began or how long it lasted.
+
+**Solution**:Used the available timestamps accurately and where there was no timestamp at all, simply noted that. Didn't assign any dates or durations that weren't actually there.
+
+
+**Time spent**:1 hour
 
 ---
 
@@ -214,13 +253,13 @@
 
 > 💡 **TIP:** Fill this in **last**, after all entries are written.
 
-**Total time spent on assignment**: [X hours]
+**Total time spent on assignment**: [2 hours 48 minutes]
 
-**Most challenging part**:
+**Most challenging part**:ensuring that the CPUs which were blocked on the semaphore would be able to wake up and exit once the final process had completed.
 
-**Most interesting learning**:
+**Most interesting learning**:mutex locks are used to protect the shared data, a counting semaphore is used to coordinate the availability of work and both of these are required in this implementation.
 
-**What I would do differently next time**:
+**What I would do differently next time**:record the start time, end time, challenges and results straight away after each work session and commit and push after each completed step.
 
 ---
 
