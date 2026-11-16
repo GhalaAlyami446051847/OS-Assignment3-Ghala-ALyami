@@ -279,7 +279,7 @@ We've now identified all the evidence required for submission (final verificatio
 
 **Your Answer:** *(5-7 sentences)*
 
-[Write your answer here.]
+[I learned that synchronisation is required when multiple threads are accessing shared mutable data. In this simulation the operations on the ready queue and the three stats contain critical sections as multiple threads can access them at the same time. A read-modify-write operation can lose an update if two threads read the same old value before either of them has written the new value. I used a ReentrantLock to provide the mutual exclusion and put each unlock() in a finally block. I also learned that a counting semaphore allows the CPU to wait for work rather than just polling an empty queue. The original output showed me that the synchronisation errors can have an effect on both the stats and the processes themselves.]
 
 ## Question 2: What was the most challenging part of this assignment?
 
@@ -287,7 +287,7 @@ We've now identified all the evidence required for submission (final verificatio
 
 **Your Answer:** *(5-7 sentences)*
 
-[Write your answer here.]
+[The hardest bit for me was working out how the CPUs were to terminate once the last process had finished. A CPU can be blocked in readyCount.acquire() while another CPU is executing the final process. Simply updating the count of completed processes doesn't cause the blocked CPU to wake up. So we needed a shutdown signal in addition to the normal permits that are released when a process is added. The solution was to release SharedStats.totalCPUs permits and check whether all processes had completed immediately upon acquiring a permit. That was tricky because the same semaphore is used for both normal work availability and for shutdown, just with very different behaviour.]
 
 ## Question 3: How did you overcome the challenges you faced?
 
@@ -295,7 +295,7 @@ We've now identified all the evidence required for submission (final verificatio
 
 **Your Answer:** *(5-7 sentences)*
 
-[Write your answer here.]
+[I worked through the problem by comparing the original output with the code operations. I worked through the CPU process, the way it would take a process, wait for a quantum to complete and then re-enqueue if it wasn't finished. I looked at the read-modify-write in SharedStats to see where an update could have been lost. I separated out the purpose of the queue lock from the purpose of the counting semaphore. Asking for an explanation of what was going on helped me make the link between the code changes and the sync concepts. I also looked at the expected verification values so that I knew what a correct execution would produce.]
 
 ## Question 4: Where can synchronization concepts be applied in real-world applications?
 
@@ -303,19 +303,19 @@ We've now identified all the evidence required for submission (final verificatio
 
 **Your Answer:** *(5-7 sentences)*
 
-[Write your answer here.]
+[Synchronisation is useful in banking systems where you've got a number of transactions all updating the same account balance. You need to protect the balance update so that one transaction doesn't just overwrite the changes made by another transaction. Ticket booking systems are another example where you need to co-ordinate updates so that you don't end up with two people booking the same seat. A print server can use a shared queue and a semaphore so that the workers will just wait until a print job is available. These are all examples which are very much in the same boat as the simulation in that you've got a number of workers accessing shared data or consuming from a queue. The synchronisation mechanism you use has to be appropriate to the resource you're protecting and the operations you're attempting to perform together.]
 
 ### Optional: What would you like to learn more about?
 
-[Any topics related to synchronization or operating systems that you're curious about?]
+[I'd like to find out more about fair locks, starvation prevention and the various synchronisation tools we have at our disposal such as blocking queues.]
 
 ### Optional: How confident do you feel about synchronization concepts now?
 
-[Beginner / Intermediate / Confident. What do you understand well? What needs more practice?]
+[Intermediate. I know what critical sections are, I know what mutual exclusion is, I know the difference between a lock and a semaphore. I just need a bit more practice with analysing thread interleavings and shutdown.]
 
 ### Optional: Feedback on the assignment
 
-[Any comments? Was it helpful? Too easy or hard? Suggestions?]
+[The assignment actually helped to link the concept of synchronisation to actual program failures that you could see. The original output versus the corrected output made the purpose of each of the features very clear.]
 
 ---
 
